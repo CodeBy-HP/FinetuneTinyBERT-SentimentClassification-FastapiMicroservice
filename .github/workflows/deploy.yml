@@ -1,0 +1,99 @@
+# name: CI/CD Pipeline
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# env:
+#   AWS_REGION: us-east-1
+#   ECR_REPOSITORY: sentiment-analysis-api
+
+# jobs:
+#   build-and-push:
+#     name: Build and Push to ECR
+#     runs-on: ubuntu-latest
+#     outputs:
+#       image: ${{ steps.build-image.outputs.image }}
+    
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.AWS_REGION }}
+
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v1
+
+#       - name: Build, tag, and push image to Amazon ECR
+#         id: build-image
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           IMAGE_TAG: ${{ github.sha }}
+#         run: |
+#           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+#           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
+
+#   # deploy:
+#   #   name: Deploy to EC2
+#   #   needs: build-and-push
+#   #   runs-on: self-hosted
+    
+#   #   steps:
+#   #     - name: Configure AWS credentials
+#   #       uses: aws-actions/configure-aws-credentials@v2
+#   #       with:
+#   #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#   #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#   #         aws-region: ${{ env.AWS_REGION }}
+
+#   #     - name: Login to Amazon ECR
+#   #       id: login-ecr
+#   #       uses: aws-actions/amazon-ecr-login@v1
+
+#   #     - name: Stop and remove old container
+#   #       run: |
+#   #         docker stop sentiment-api || true
+#   #         docker rm sentiment-api || true
+
+#   #     - name: Pull and deploy new container
+#   #       env:
+#   #         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#   #       run: |
+#   #         docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          
+#   #         docker run -d \
+#   #           --name sentiment-api \
+#   #           --restart unless-stopped \
+#   #           -p 80:8000 \
+#   #           -e BUCKET_NAME=${{ secrets.BUCKET_NAME }} \
+#   #           -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+#   #           -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+#   #           -e AWS_DEFAULT_REGION=${{ env.AWS_REGION }} \
+#   #           $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+#   #     - name: Clean up old images
+#   #       run: docker image prune -af
+
+#   #     - name: Verify deployment
+#   #       run: |
+#   #         echo "Waiting for application to start..."
+#   #         sleep 30
+          
+#   #         echo "Checking container status..."
+#   #         docker ps | grep sentiment-api
+          
+#   #         echo "Checking application health..."
+#   #         curl -f http://localhost:80/health || exit 1
+          
+#   #         echo "✅ Deployment successful!"
