@@ -178,11 +178,12 @@ git push origin main  # Triggers automated CI/CD
 
 ---
 
-## �👤 Author
+## 👤 Author
 
-**Your Name**  
-📧 your.email@example.com  
-🔗 [GitHub](https://github.com/yourusername) • [LinkedIn](https://linkedin.com/in/yourprofile)
+**Harsh Patel**  
+📧 code.by.hp@gmail.com  
+🔗 [GitHub](https://github.com/CodeBy-HP) • [LinkedIn](https://www.linkedin.com/in/harsh-patel-389593292/)
+
 
 ---
 
