@@ -1,5 +1,6 @@
 import torch
 import logging
+import socket
 from get_model import download_model_from_s3
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Form
@@ -103,6 +104,15 @@ async def health_check():
         "status": "healthy",
         "model_loaded": model is not None,
         "device": str(device),
+    }
+
+
+@app.get("/container-info")
+async def container_info():
+    """Show which container is serving this request (useful for demo/load balancing)"""
+    return {
+        "container_id": socket.gethostname(),
+        "status": "serving",
     }
 
 

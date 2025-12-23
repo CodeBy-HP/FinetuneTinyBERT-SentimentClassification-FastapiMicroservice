@@ -197,6 +197,10 @@ train_dir
 
 .env
 fastapi_app/.env
-tinybert-sentiment-analysis
 train_dir
+tinybert-sentiment-analysis
 fastapi_app/model/*
+CHECKLIST.md
+COMMANDS.md
+DEPLOYMENT.md
+QUICKSTART.md
